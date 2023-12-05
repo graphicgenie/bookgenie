@@ -1,44 +1,41 @@
 <script setup>
+import { useForm, Link } from '@inertiajs/vue3'
+import { computed, onMounted } from 'vue'
 import FormSection from '@/Components/FormSection.vue'
-import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
-import { useForm } from '@inertiajs/vue3'
+import InputLabel from '@/Components/InputLabel.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
-import { computed, onMounted, ref } from 'vue'
 import ContactSearch from '@/Components/ContactSearch.vue'
 
-Date.prototype.addDays = function (days) {
-    var date = new Date(this.valueOf())
-    date.setDate(date.getDate() + days)
-    return date
-}
 const props = defineProps({
     ledger_accounts: Object,
     taxes: Object,
     invoice_number: Number,
+    invoice: Object,
 })
 
 let form = useForm({
-    contact_id: '',
-    invoice_date: new Date(Date.now()).toLocaleDateString(),
-    due_date: new Date(Date.now()).addDays(15).toLocaleDateString(),
-    type: 'sales_invoice',
-    invoices_details: [],
+    contact_id: props.invoice.contact_id,
+    invoice_date: props.invoice.invoice_date,
+    invoice_number: props.invoice.invoice_number,
+    due_date: props.invoice.due_date,
+    type: props.invoice.type,
+    invoices_details: props.invoice.invoice_details,
+    invoice_scans: [],
 })
 
 const addInvoiceDetail = () => {
     form.invoices_details.push({
-        amount: 1,
+        amount: '1',
         description: '',
         price: '',
         tax_id: 0,
         ledger_account_id: 0,
     })
 }
-
 const removeInvoiceDetail = (index) => form.invoices_details.splice(index, 1)
+const updateInvoice = () => form.put(route('purchase_invoices.update', props.invoice.id))
 const selectContact = (value) => (form.contact_id = value)
-const createInvoice = () => form.post(route('sales_invoices.store'))
 
 const totalExVat = computed(() => {
     let total = 0.0
@@ -90,19 +87,21 @@ let euro = Intl.NumberFormat('nl-NL', {
     style: 'currency',
     currency: 'EUR',
 })
-
-onMounted(() => addInvoiceDetail())
 </script>
 
 <template>
-    <div>
-        <h1 class="text-3xl font-medium pl-2 pb-8">Verkoop factuur</h1>
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-            <FormSection @submitted="createInvoice">
+    <h1 class="text-3xl font-medium pl-2 pb-8">Inkoop factuur</h1>
+    <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg col-span-2">
+            <FormSection @submitted="updateInvoice">
                 <template #form>
                     <div class="flex flex-col gap-4">
                         <div>
-                            <ContactSearch @submitted="selectContact" />
+                            <ContactSearch label="Leverancier" @submitted="selectContact" />
+                        </div>
+                        <div>
+                            <InputLabel>Factuurnummer</InputLabel>
+                            <TextInput v-model="form.invoice_number" class="w-1/3" />
                         </div>
                         <div class="flex gap-4">
                             <div>
@@ -156,8 +155,6 @@ onMounted(() => addInvoiceDetail())
                                 <div>
                                     <TextInput
                                         class="w-full"
-                                        type="number"
-                                        step="0.01"
                                         v-model="detail.price"
                                         placeholder="prijs ex. btw"
                                     />
@@ -217,6 +214,14 @@ onMounted(() => addInvoiceDetail())
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <InputLabel>Bestanden</InputLabel>
+                        <TextInput
+                            multiple="true"
+                            type="file"
+                            @input="form.invoice_scans = $event.target.files"
+                        />
+                    </div>
                 </template>
                 <template #actions>
                     <PrimaryButton
@@ -227,6 +232,11 @@ onMounted(() => addInvoiceDetail())
                     </PrimaryButton>
                 </template>
             </FormSection>
+        </div>
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <div v-for="upload in invoice.uploads">
+                <a :href="route('download', upload.id)">{{ upload.name }}</a>
+            </div>
         </div>
     </div>
 </template>

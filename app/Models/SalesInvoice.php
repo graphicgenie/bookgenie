@@ -24,7 +24,7 @@ class SalesInvoice extends Invoice
     {
         $last = SalesInvoice
             ::where('user_id', auth()->user()->id)
-            ->where('type', Invoice::SALES_INVOICE)
+            ->where('type', \App\Enums\Invoice::SALES_INVOICE)
             ->whereYear('created_at', Carbon::now()->year)
             ->latest()
             ->first('invoice_number');

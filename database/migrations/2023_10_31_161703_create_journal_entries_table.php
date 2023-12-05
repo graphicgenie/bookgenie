@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('ledger_account_id');
             $table->unsignedBigInteger('invoice_id')->nullable();
             $table->unsignedBigInteger('journal_id')->nullable();
+            $table->unsignedBigInteger('transaction_id')->nullable();
             $table->text('description')->nullable();
             $table->float('debit')->nullable();
             $table->float('credit')->nullable();

@@ -11,7 +11,7 @@ class TransactionResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'bank_id' => $this->bank_id,
             'amount' => $this->amount,
@@ -19,8 +19,16 @@ class TransactionResource extends JsonResource
             'description' => $this->description,
             'timestamp' => $this->timestamp,
             'code' => $this->code,
+            'link_type' => $this->link_type,
+            'journal_entry' => $this->journal_entry?->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+
+        if ($this->link_type) {
+            $data['link'] = $this->link;
+        }
+
+        return $data;
     }
 }

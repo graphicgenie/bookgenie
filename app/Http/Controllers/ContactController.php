@@ -19,7 +19,7 @@ class ContactController extends Controller
     public function index()
     {
         return Inertia::render('Contact/Index', [
-            'contacts' => ContactResource::collection(Contact::all())
+            'contacts' => ContactResource::collection(Contact::where('user_id', auth()->user()->id)->get())
         ]);
     }
 
@@ -52,24 +52,23 @@ class ContactController extends Controller
 
     public function show(Contact $contact)
     {
-        $this->authorize('view', $contact);
-
         return new ContactResource($contact);
+    }
+
+    public function edit(Contact $contact)
+    {
+        return Inertia::render('Contact/Edit', ['contact' => $contact]);
     }
 
     public function update(ContactRequest $request, Contact $contact)
     {
-        $this->authorize('update', $contact);
-
         $contact->update($request->validated());
 
-        return new ContactResource($contact);
+        return redirect(route('contact.index'));
     }
 
     public function destroy(Contact $contact)
     {
-        $this->authorize('delete', $contact);
-
         $contact->delete();
 
         return response()->json();

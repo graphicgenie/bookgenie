@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Journal extends Model
 {
@@ -14,9 +14,4 @@ class Journal extends Model
         'reference',
         'journal_date'
     ];
-
-    public function journalEntries(): HasMany
-    {
-        return $this->hasMany(JournalEntry::class);
-    }
 }

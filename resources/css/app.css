@@ -10,6 +10,6 @@ html, body, #app {
     height: 100%;
 }
 
-#app {
+#app, main {
     background: #F8F8FA;
 }

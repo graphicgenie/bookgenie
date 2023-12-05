@@ -16,12 +16,12 @@ class InvoiceDetailResource extends JsonResource
         return [
             'id' => $this->id,
             'description' => $this->description,
-            'tax_id' => TaxResource::make(Tax::where('id', $this->tax_id)->firstOrFail()),
+            'tax_id' => TaxResource::make(Tax::where('id', $this->tax_id)->first()),
             'amount' => $this->amount,
             'price' => $this->price,
             'invoice_id' => $this->invoice_id,
             'ledger_account_id' => LedgerAccountResource::make(
-                LedgerAccount::where('id', $this->ledger_account_id)->firstOrFail()
+                LedgerAccount::where('id', $this->ledger_account_id)->first()
             ),
             'totalInclVat' => $this->priceInclVat,
             'row_order' => $this->row_order,

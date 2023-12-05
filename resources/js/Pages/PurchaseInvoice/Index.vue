@@ -51,7 +51,12 @@ let euro = Intl.NumberFormat('nl-NL', {
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                <tr v-for="invoice in invoices.data" :key="invoice.id">
+                <tr
+                    v-for="invoice in invoices.data"
+                    :key="invoice.id"
+                    @click="router.get(route('purchase_invoices.edit', invoice.id))"
+                    class="cursor-pointer"
+                >
                     <td
                         class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-0"
                     >

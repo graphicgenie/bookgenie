@@ -27,8 +27,6 @@ const filteredPeople = computed(() =>
     query.value === ''
         ? contacts.value
         : contacts.value.filter((person) => {
-              // console.log(person)
-              console.log(Object.values(person).indexOf('GraphicGenie') > -1)
               return (
                   person.company_name?.toLowerCase().includes(query.value.toLowerCase()) ||
                   person.firstname.toLowerCase().includes(query.value.toLowerCase()) ||

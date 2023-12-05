@@ -4,6 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use App\Models\Bank;
+use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Journal;
 use App\Models\JournalEntry;
@@ -13,7 +14,9 @@ use App\Models\PurchaseInvoice;
 use App\Models\SalesInvoice;
 use App\Models\Tax;
 use App\Models\Transaction;
+use App\Models\upload;
 use App\Policies\BankPolicy;
+use App\Policies\CompanyPolicy;
 use App\Policies\ContactPolicy;
 use App\Policies\JournalEntryPolicy;
 use App\Policies\JournalPolicy;
@@ -23,6 +26,7 @@ use App\Policies\PurchaseInvoicePolicy;
 use App\Policies\SalesInvoicePolicy;
 use App\Policies\TaxPolicy;
 use App\Policies\TransactionPolicy;
+use App\Policies\uploadPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -44,6 +48,8 @@ class AuthServiceProvider extends ServiceProvider
         Journal::class => JournalPolicy::class,
         Transaction::class => TransactionPolicy::class,
         Bank::class => BankPolicy::class,
+        Company::class => CompanyPolicy::class,
+        upload::class => uploadPolicy::class,
     ];
 
     /**

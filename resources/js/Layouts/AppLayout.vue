@@ -45,6 +45,8 @@ const navigation = [
         icon: UsersIcon,
         current: false,
     },
+    { name: 'Contacten', href: route('contact.index'), icon: ChartPieIcon, current: false },
+    { name: 'Bank', href: route('transactions.index'), icon: ChartPieIcon, current: false },
     {
         name: 'Resultaatrekening',
         href: route('profit-loss'),
@@ -292,7 +294,7 @@ const logout = () => {
                         <!--                        </li>-->
                         <li class="mt-auto">
                             <Link
-                                href="#"
+                                :href="route('settings')"
                                 class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                             >
                                 <Cog6ToothIcon

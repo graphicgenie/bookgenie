@@ -20,6 +20,7 @@ let form = useForm({
     due_date: '',
     type: 'purchase_invoice',
     invoices_details: [],
+    invoice_scans: null,
 })
 
 const addInvoiceDetail = () => {
@@ -150,7 +151,6 @@ onMounted(() => addInvoiceDetail())
                             <div>
                                 <TextInput
                                     class="w-full"
-                                    type="number"
                                     v-model="detail.price"
                                     placeholder="prijs ex. btw"
                                 />
@@ -209,6 +209,14 @@ onMounted(() => addInvoiceDetail())
                             {{ euro.format(totalInclVat) }}
                         </div>
                     </div>
+                </div>
+                <div>
+                    <InputLabel>Bestanden</InputLabel>
+                    <TextInput
+                        multiple="true"
+                        type="file"
+                        @input="form.invoice_scans = $event.target.files"
+                    />
                 </div>
             </template>
             <template #actions>

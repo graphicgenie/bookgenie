@@ -16,7 +16,7 @@ class PurchaseInvoiceResource extends JsonResource
         return [
             'id' => $this->id,
             'contact' => ContactResource::make(
-                Contact::where('id', $this->contact_id)->firstOrFail()
+                Contact::where('id', $this->contact_id)->first()
             ),
             'invoice_date' => $this->invoice_date,
             'due_date' => $this->due_date,

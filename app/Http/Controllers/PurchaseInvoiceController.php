@@ -12,7 +12,9 @@ use App\Models\LedgerAccount;
 use App\Models\PurchaseInvoice;
 use App\Models\SalesInvoice;
 use App\Models\Tax;
+use App\Models\upload;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,7 +31,7 @@ class PurchaseInvoiceController extends Controller
             'invoices' => PurchaseInvoiceResource::collection
             (PurchaseInvoice
                 ::where('user_id', auth()->user()->id)
-                ->where('type', Invoice::PURCHASE_INVOICE)
+                ->where('type', \App\Enums\Invoice::PURCHASE_INVOICE)
                 ->with('invoiceDetails')
                 ->get())
         ]);
@@ -55,7 +57,7 @@ class PurchaseInvoiceController extends Controller
             'contact_id' => $request->contact_id,
             'invoice_date' => Carbon::parse($request->invoice_date),
             'due_date' => Carbon::parse($request->due_date ?? Carbon::now()->addMonth()),
-            'type' => Invoice::PURCHASE_INVOICE,
+            'type' => \App\Enums\Invoice::PURCHASE_INVOICE,
             'invoice_number' => $request->invoice_number
         ]);
 
@@ -70,23 +72,43 @@ class PurchaseInvoiceController extends Controller
             ]);
         }
 
+        foreach ($request->file('invoice_scans') as $invoiceScan) {
+            Upload::create([
+                'name' => $invoiceScan->getClientOriginalName(),
+                'file_name' => Storage::putFile('/purchase_invoices/'.auth()->user()->id, $invoiceScan),
+                'user_id' => auth()->user()->id,
+                'model_id' => $invoice['id'],
+                'model_type' => \App\Enums\Invoice::PURCHASE_INVOICE
+            ]);
+        }
+
         return redirect(route('purchase_invoices.index'));
     }
 
-    public function show(PurchaseInvoice $purchaseInvoice)
+    public function edit(PurchaseInvoice $purchaseInvoice)
     {
-        $this->authorize('view', $purchaseInvoice);
+        $ledger_accounts = LedgerAccountResource::collection(
+            LedgerAccount::where('type', 'expenses')->get()
+        );
+        $taxes = Tax::all();
+        $invoice = Invoice::where('id', $purchaseInvoice->id)
+            ->with('invoiceDetails')
+            ->with('uploads')
+            ->first();
 
-        return new PurchaseInvoiceResource($purchaseInvoice);
+        return Inertia::render('PurchaseInvoice/Edit', [
+            'ledger_accounts' => $ledger_accounts,
+            'taxes' => $taxes,
+            'invoice' => $invoice
+        ]);
     }
 
     public function update(PurchaseInvoiceRequest $request, PurchaseInvoice $purchaseInvoice)
     {
-        $this->authorize('update', $purchaseInvoice);
+        dd($request);
+//        $purchaseInvoice->update($request->validated());
 
-        $purchaseInvoice->update($request->validated());
-
-        return new PurchaseInvoiceResource($purchaseInvoice);
+        return redirect(route('purchase_invoices.index'));
     }
 
     public function destroy(PurchaseInvoice $purchaseInvoice)

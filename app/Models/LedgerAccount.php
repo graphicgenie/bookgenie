@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LedgerAccount extends Model
@@ -41,10 +43,20 @@ class LedgerAccount extends Model
 
     public function getTotalAttribute(): float
     {
-        if ($this->account_type === LedgerAccount::DEBIT) {
-            return $this->journalEntries()->sum('debit') - $this->journalEntries()->sum('credit');
+        switch ($this->account_type) {
+            case LedgerAccount::DEBIT:
+                return $this->journalEntries->sum('debit') - $this->journalEntries->sum('credit');
+            default:
+                return $this->journalEntries->sum('credit') - $this->journalEntries->sum('debit');
         }
+    }
 
-        return $this->journalEntries()->sum('credit') - $this->journalEntries()->sum('debit');
+    public function scopeDateBetween(Builder $query, Carbon $start, Carbon $end): void
+    {
+        $query->with([
+            'journalEntries' => function (Builder $query) use ($start, $end) {
+                $query->whereBetween('created_at', [$start, $end]);
+            }
+        ]);
     }
 }

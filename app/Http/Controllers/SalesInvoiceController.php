@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Invoice;
 use App\Http\Requests\InvoiceRequest;
 use App\Http\Resources\LedgerAccountResource;
 use App\Http\Resources\SalesInvoiceResource;
-use App\Models\Invoice;
 use App\Models\InvoiceDetail;
 use App\Models\LedgerAccount;
 use App\Models\SalesInvoice;

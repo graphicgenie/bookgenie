@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('user_id')->default(0);
             $table->unsignedBigInteger('parent_id')->default(0);
+            $table->unsignedBigInteger('ledger_account_id')->default(0);
             $table->string('name');
             $table->string('type');
             $table->string('account_type');

@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('bank_id');
+            $table->unsignedBigInteger('link_id');
+            $table->string('link_type');
             $table->float('amount');
             $table->string('type');
             $table->text('description');

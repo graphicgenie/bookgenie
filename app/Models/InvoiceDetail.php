@@ -25,10 +25,10 @@ class InvoiceDetail extends Model
     {
         static::created(function (InvoiceDetail $invoiceDetail) {
             $vat_percentage = Tax::where('id', $invoiceDetail->tax_id)->firstOrFail()->percentage;
-            $vat = ($invoiceDetail->price / ($vat_percentage + 100)) * $vat_percentage;
+            $vat = ($invoiceDetail->price / 100) * $vat_percentage;
 
             switch ($invoiceDetail->invoice->type) {
-                case Invoice::SALES_INVOICE:
+                case \App\Enums\Invoice::SALES_INVOICE:
                     JournalEntry::create([
                         'invoice_id' => $invoiceDetail->invoice->id,
                         'ledger_account_id' => $invoiceDetail->ledger_account_id,
@@ -47,7 +47,7 @@ class InvoiceDetail extends Model
                         'debit' => $invoiceDetail->price + $vat,
                     ]);
                     break;
-                case Invoice::PURCHASE_INVOICE:
+                case \App\Enums\Invoice::PURCHASE_INVOICE:
                     JournalEntry::create([
                         'invoice_id' => $invoiceDetail->invoice->id,
                         'ledger_account_id' => $invoiceDetail->ledger_account_id,
